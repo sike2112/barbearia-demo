@@ -7,7 +7,7 @@ const BARBERSHOP_NAME = 'Barbearia Nobre';
 const CITY = 'Jaguaribe';
 const STATE = 'CE';
 const ESTABLISHED_YEAR = 2006; // fonte única — usada no Hero, Sobre e nas estatísticas
-const WHATSAPP_NUMBER = '5511999999999'; // 55 + DDD + número, apenas dígitos — placeholder de demo
+const WHATSAPP_NUMBER = '558896408809'; // 55 + DDD + número, apenas dígitos
 
 const yearsOfExperience = new Date().getFullYear() - ESTABLISHED_YEAR;
 

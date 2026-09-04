@@ -72,6 +72,7 @@ export default function BookingModal({ isOpen, initialServiceId, onClose }) {
   const goTo = (step) => setState((s) => ({ ...s, step }));
   const back = () => goTo(state.step - 1);
 
+  // Mesma função de finalização para mobile e desktop — não há caminho separado.
   const confirmAndSendWhatsapp = () => {
     const lines = [
       'Olá! Gostaria de solicitar um agendamento:',
@@ -84,8 +85,19 @@ export default function BookingModal({ isOpen, initialServiceId, onClose }) {
       `Valor: R$ ${service?.price ?? '-'}`,
     ];
     if (state.phone.trim()) lines.push(`Telefone: ${state.phone.trim()}`);
-    const message = encodeURIComponent(lines.join('\n'));
-    window.open(`https://wa.me/${SITE.whatsappNumber}?text=${message}`, '_blank', 'noopener,noreferrer');
+    const mensagem = lines.join('\n');
+
+    // Número vem só do config do frontend — nada de variável de ambiente
+    // (este é um Static Site no Render, sem backend).
+    const numero = SITE.whatsappNumber;
+    const whatsappUrl = `https://wa.me/${numero}?text=${encodeURIComponent(mensagem)}`;
+
+    // eslint-disable-next-line no-console
+    console.log('WhatsApp URL final:', whatsappUrl);
+    // DIAGNÓSTICO TEMPORÁRIO — remover depois de confirmar a URL no celular.
+    alert(whatsappUrl);
+
+    window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
     onClose();
   };
 
