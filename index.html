@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="pt-BR" translate="no">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="google" content="notranslate" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Barbearia Nobre — cortes clássicos com padrão moderno." />
+    <meta name="theme-color" content="#080909" />
+    <title>Barbearia Nobre</title>
+    <!-- Crítico: define o fundo escuro antes de qualquer CSS externo carregar,
+         evitando o flash branco padrão do navegador no primeiro paint. -->
+    <style>
+      html,
+      body,
+      #root {
+        background: #080909;
+        min-height: 100%;
+      }
+    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
