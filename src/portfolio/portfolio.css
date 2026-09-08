@@ -1,0 +1,733 @@
+/* ==========================================================================
+   Modo Portfólio — case study da NOBRE para a Sike Sites.
+   Reaproveita os tokens globais definidos em src/index.css (cores, fontes,
+   easing). Todo o restante fica isolado sob o prefixo "pf-" para nunca
+   colidir com as classes do site principal.
+   ========================================================================== */
+
+.pf-page {
+  background: var(--bg);
+  color: var(--ink);
+  overflow-x: hidden;
+}
+
+.pf-back {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 20;
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: var(--ink-dim);
+  background: rgba(8, 9, 9, 0.7);
+  backdrop-filter: blur(6px);
+  padding: 8px 12px;
+  border: 1px solid var(--line-soft);
+  border-radius: 4px;
+  transition: color 0.2s var(--ease), border-color 0.2s var(--ease);
+}
+.pf-back:hover {
+  color: var(--ink);
+  border-color: var(--line);
+}
+
+.pf-eyebrow {
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.pf-eyebrow--muted {
+  color: var(--ink-faint);
+}
+
+.pf-index {
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--rust);
+  letter-spacing: 0.04em;
+}
+
+.pf-rule {
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+  position: relative;
+}
+.pf-rule::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: -1px;
+  width: 24px;
+  height: 3px;
+  background: var(--rust);
+}
+
+.pf-tag {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 20px;
+}
+
+.pf-section {
+  padding: 72px 0;
+}
+.pf-section--panel {
+  background: var(--bg-raised);
+}
+.pf-section__head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 32px;
+}
+
+/* ==========================================================================
+   Hero — composição assimétrica: título grande à esquerda, meta info à
+   direita/embaixo, sem centralização.
+   ========================================================================== */
+.pf-hero {
+  position: relative;
+  min-height: 94svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 96px 0 56px;
+  overflow: hidden;
+}
+.pf-hero__grid {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: repeating-linear-gradient(to right, var(--ink) 0 1px, transparent 1px 64px),
+    repeating-linear-gradient(to bottom, var(--ink) 0 1px, transparent 1px 64px);
+  mask-image: radial-gradient(ellipse at center, black, transparent 78%);
+}
+.pf-hero__inner {
+  position: relative;
+  z-index: 1;
+}
+.pf-hero__top {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 56px;
+}
+.pf-hero__top .pf-eyebrow--muted {
+  margin-left: auto;
+}
+
+.pf-hero__main {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(220px, 1fr);
+  gap: 32px;
+  align-items: end;
+}
+.pf-hero__titleblock {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+  min-width: 0;
+}
+.pf-hero__mark {
+  color: var(--rust);
+  flex-shrink: 0;
+  margin-top: 0.35em;
+}
+.pf-hero__title {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  line-height: 0.86;
+  font-weight: 700;
+  font-size: clamp(4.2rem, 15vw, 11rem);
+  letter-spacing: -0.02em;
+}
+.pf-hero__title span {
+  display: block;
+  color: var(--ink-dim);
+  font-size: 0.28em;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  margin-top: 0.18em;
+}
+
+.pf-hero__side {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-bottom: 0.4em;
+}
+.pf-hero__kicker {
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  letter-spacing: 0.04em;
+  color: var(--rust);
+}
+.pf-hero__desc {
+  font-size: 0.92rem;
+  color: var(--ink-dim);
+  max-width: 34ch;
+}
+.pf-hero__foot {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+  width: fit-content;
+}
+.pf-hero__foot-label {
+  font-size: 0.72rem;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.pf-hero__foot-brand {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+/* ==========================================================================
+   Overview — ficha editorial, números grandes em vez de cards
+   ========================================================================== */
+.pf-overview {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 56px;
+  align-items: end;
+}
+.pf-overview__fields {
+  margin: 0;
+}
+.pf-overview__row {
+  display: grid;
+  grid-template-columns: 56px 1fr auto;
+  align-items: baseline;
+  gap: 20px;
+  padding: 22px 0;
+  border-bottom: 1px solid var(--line-soft);
+  transition: border-color 0.2s var(--ease);
+}
+.pf-overview__row:hover {
+  border-color: var(--rust);
+}
+.pf-overview__n {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--rust);
+}
+.pf-overview__row dt {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.pf-overview__row dd {
+  margin: 0;
+  text-align: right;
+  font-size: 0.88rem;
+  color: var(--ink-dim);
+  max-width: 30ch;
+}
+.pf-overview__text {
+  font-size: 0.96rem;
+  color: var(--ink-dim);
+  max-width: 38ch;
+  padding-bottom: 22px;
+}
+
+/* ==========================================================================
+   Website showcase — o navegador é o protagonista; o celular sobrepõe o
+   canto inferior direito, como uma composição de case de agência.
+   ========================================================================== */
+.pf-showcase__stage {
+  position: relative;
+}
+.pf-showcase__browser {
+  width: 100%;
+}
+.pf-showcase__phone {
+  position: absolute;
+  right: -28px;
+  bottom: -40px;
+  width: 190px;
+  z-index: 2;
+  filter: drop-shadow(0 20px 30px rgba(0, 0, 0, 0.5));
+}
+.pf-tag--phone {
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.pf-frame-scaler {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+}
+/* Esmaece suavemente a base do preview — qualquer conteúdo residual da
+   página real logo abaixo do recorte passa a ler como "continua rolando",
+   e não como um corte acidental. */
+.pf-frame-scaler::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 16%;
+  background: linear-gradient(to bottom, transparent, var(--bg-panel));
+  pointer-events: none;
+}
+.pf-frame-inner {
+  transform-origin: top left;
+  position: relative;
+}
+.pf-frame-inner iframe {
+  border: 0;
+  display: block;
+  pointer-events: none;
+  background: var(--bg);
+}
+
+.pf-browser {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--bg-panel);
+  box-shadow: 0 32px 64px -28px rgba(0, 0, 0, 0.65);
+}
+.pf-browser__bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 16px;
+  background: var(--bg-raised);
+  border-bottom: 1px solid var(--line-soft);
+}
+.pf-browser__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--line);
+}
+.pf-browser__url {
+  margin-left: 10px;
+  font-size: 0.72rem;
+  color: var(--ink-faint);
+  letter-spacing: 0.02em;
+}
+
+.pf-phone {
+  position: relative;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  overflow: hidden;
+  background: var(--bg-panel);
+  box-shadow: 0 20px 40px -22px rgba(0, 0, 0, 0.6);
+}
+.pf-phone__notch {
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 5px;
+  border-radius: 3px;
+  background: var(--bg);
+  z-index: 2;
+}
+.pf-phone__label {
+  display: block;
+  text-align: center;
+  font-size: 0.7rem;
+  color: var(--ink-faint);
+  margin-top: 10px;
+}
+.pf-phone__static {
+  width: 100%;
+  overflow: hidden;
+  background: var(--bg);
+}
+
+/* ==========================================================================
+   Services — lista tipográfica grande, numerada, sem cards
+   ========================================================================== */
+.pf-services {
+  margin-bottom: 28px;
+}
+.pf-services__row {
+  display: grid;
+  grid-template-columns: 40px 1fr auto;
+  align-items: baseline;
+  gap: 18px;
+  padding: 18px 4px;
+  border-bottom: 1px solid var(--line-soft);
+  border-radius: 4px;
+  transition: background 0.2s var(--ease), border-color 0.2s var(--ease);
+}
+.pf-services__row:hover {
+  background: var(--bg-raised);
+  border-color: var(--rust);
+}
+.pf-services__n {
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--rust);
+}
+.pf-services__name {
+  font-family: var(--font-display);
+  font-size: clamp(1.1rem, 2vw, 1.5rem);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+}
+.pf-services__price {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--rust);
+}
+.pf-services__note {
+  font-size: 0.95rem;
+  color: var(--ink-dim);
+  border-left: 2px solid var(--rust);
+  padding-left: 14px;
+}
+
+/* ==========================================================================
+   Booking experience — passos + previews reais lado a lado
+   ========================================================================== */
+.pf-booking__lead {
+  max-width: 52ch;
+  font-size: 1rem;
+  color: var(--ink-dim);
+  margin-bottom: 40px;
+}
+.pf-booking__layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: start;
+  margin-bottom: 32px;
+}
+.pf-booking__steps {
+  display: flex;
+  flex-direction: column;
+}
+.pf-booking__step {
+  display: grid;
+  grid-template-columns: 32px 1fr;
+  gap: 14px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line-soft);
+}
+.pf-booking__step.is-highlighted {
+  border-color: var(--line);
+}
+.pf-booking__step-n {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--ink-faint);
+}
+.pf-booking__step.is-highlighted .pf-booking__step-n {
+  color: var(--rust);
+}
+.pf-booking__step-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.pf-booking__step-title {
+  font-family: var(--font-display);
+  font-size: 0.92rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+}
+.pf-booking__step-desc {
+  font-size: 0.8rem;
+  color: var(--ink-dim);
+  max-width: 34ch;
+}
+
+.pf-booking__previews {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.pf-booking-preview {
+  background: var(--bg);
+  border: 1px solid var(--line-soft);
+  border-radius: 6px;
+  padding: 16px;
+}
+.pf-booking-preview__label {
+  display: block;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--rust);
+  margin-bottom: 12px;
+}
+.pf-booking-preview .booking-list {
+  gap: 6px;
+}
+.pf-booking-preview .booking-option {
+  padding: 10px 12px;
+}
+.pf-booking-preview .booking-dates {
+  margin-bottom: 8px;
+}
+.pf-booking-preview__cta {
+  display: block;
+  text-align: center;
+  margin-top: 14px;
+  font-size: 0.8rem;
+  pointer-events: none;
+}
+
+.pf-booking__disclaimer {
+  font-size: 0.78rem;
+  color: var(--ink-faint);
+  max-width: 60ch;
+  line-height: 1.5;
+}
+
+/* ==========================================================================
+   Mobile experience
+   ========================================================================== */
+.pf-mobile__lead {
+  max-width: 48ch;
+  font-size: 0.95rem;
+  color: var(--ink-dim);
+  margin-bottom: 36px;
+}
+.pf-mobile__row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  max-width: 680px;
+}
+
+/* ==========================================================================
+   Features
+   ========================================================================== */
+.pf-features {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  column-gap: 56px;
+}
+.pf-features__item {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding: 13px 0;
+  border-bottom: 1px solid var(--line-soft);
+  font-size: 0.95rem;
+}
+.pf-features__n {
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--rust);
+  flex-shrink: 0;
+}
+
+/* ==========================================================================
+   Final — assinatura forte da Sike Sites. Único ponto do case em que o azul
+   elétrico da marca Sike aparece, como acento discreto de autoria.
+   ========================================================================== */
+.pf-final {
+  --sike-blue: #2e5cff;
+  position: relative;
+  padding: 120px 0 100px;
+  text-align: center;
+  border-top: 1px solid var(--line-soft);
+  overflow: hidden;
+}
+.pf-final__watermark {
+  position: absolute;
+  left: 50%;
+  bottom: -0.12em;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-family: var(--font-display);
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: clamp(4rem, 18vw, 11rem);
+  line-height: 1;
+  letter-spacing: -0.01em;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(46, 92, 255, 0.16);
+  pointer-events: none;
+  z-index: 0;
+}
+.pf-final__inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.pf-final__project {
+  margin-bottom: 56px;
+}
+.pf-final__title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.pf-final__title h2 {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  font-weight: 700;
+  line-height: 0.92;
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+}
+.pf-final__title h2 span {
+  display: inline;
+  color: var(--ink-dim);
+  font-weight: 500;
+}
+.pf-final__title h2 span::before {
+  content: ' ';
+}
+.pf-final__tagline {
+  font-size: 0.92rem;
+  color: var(--ink-dim);
+  max-width: 40ch;
+  margin: 0 auto;
+}
+.pf-final__credit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding-top: 32px;
+  border-top: 1px solid var(--sike-blue);
+}
+.pf-final__credit-label {
+  font-size: 0.76rem;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.pf-final__credit-brand {
+  font-family: var(--font-display);
+  font-size: clamp(2.4rem, 7vw, 4rem);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.pf-final__credit-sub {
+  font-size: 0.85rem;
+  color: var(--ink-dim);
+}
+.pf-final__handle {
+  margin-top: 12px;
+  padding: 6px 14px;
+  border: 1px solid var(--sike-blue);
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--sike-blue);
+  letter-spacing: 0.02em;
+}
+
+/* ==========================================================================
+   Responsivo
+   ========================================================================== */
+@media (max-width: 900px) {
+  .pf-hero__main {
+    grid-template-columns: 1fr;
+    align-items: start;
+    gap: 40px;
+  }
+  .pf-overview {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+  .pf-overview__text {
+    padding-bottom: 0;
+  }
+  .pf-showcase__phone {
+    position: static;
+    width: 170px;
+    margin: 24px auto 0;
+    filter: none;
+  }
+  .pf-booking__layout {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+}
+
+@media (max-width: 620px) {
+  .pf-section {
+    padding: 52px 0;
+  }
+  .pf-hero {
+    padding: 88px 0 44px;
+    min-height: unset;
+  }
+  .pf-hero__top {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .pf-hero__titleblock {
+    gap: 12px;
+  }
+  .pf-overview__row {
+    grid-template-columns: 32px 1fr;
+    row-gap: 6px;
+  }
+  .pf-overview__row dd {
+    grid-column: 2;
+    text-align: left;
+    max-width: none;
+  }
+  .pf-services__row {
+    grid-template-columns: 28px 1fr auto;
+    padding: 14px 4px;
+  }
+  .pf-booking__step {
+    grid-template-columns: 24px 1fr;
+  }
+  .pf-mobile__row {
+    grid-template-columns: 1fr;
+    max-width: 240px;
+    margin: 0 auto;
+    gap: 28px;
+  }
+  .pf-features {
+    grid-template-columns: 1fr;
+    column-gap: 0;
+  }
+  .pf-final {
+    padding: 88px 0 72px;
+  }
+  .pf-final__credit-brand {
+    font-size: 2.2rem;
+  }
+}
