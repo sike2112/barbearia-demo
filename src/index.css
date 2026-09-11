@@ -137,6 +137,17 @@ section[id] {
   background: var(--rust);
 }
 
+/* Número de seção — reutilizado em todo o miolo editorial do site (Serviços,
+   Barbearia, Equipe, Agendamento) para dar ritmo e consistência visual. */
+.section-index {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--rust);
+  flex-shrink: 0;
+}
+
 /* Botões */
 .btn {
   display: inline-flex;
@@ -331,19 +342,6 @@ input:focus-visible {
     repeating-linear-gradient(to bottom, var(--ink) 0 1px, transparent 1px 56px);
   mask-image: radial-gradient(ellipse at center, black, transparent 75%);
 }
-.hero__cursor {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 28px;
-  height: 28px;
-  margin: -14px 0 0 -14px;
-  border: 1px solid var(--rust);
-  border-radius: 50%;
-  z-index: 6;
-  pointer-events: none;
-}
-
 .hero__inner {
   position: relative;
   z-index: 1;
@@ -375,6 +373,21 @@ input:focus-visible {
 .hero__layer--back {
   z-index: 1;
   margin-bottom: -34px;
+}
+
+/* Faíscas de LED percorrendo o contorno do lettering "NOBRE" — camada SVG
+   absoluta, alinhada dinamicamente por HeroLedOutline.jsx (que também
+   escreve a posição de cada faísca via requestAnimationFrame, direto nos
+   elementos). Fica sempre atrás da navalha (.hero__layer--object,
+   z-index:2) por herdar o z-index:1 deste container. Puramente decorativa,
+   não interfere na leitura do texto real (off-white) por trás dela. */
+.hero__led {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: visible;
 }
 .hero__layer--object {
   z-index: 2;
@@ -577,34 +590,234 @@ input:focus-visible {
 }
 
 /* ==========================================================================
-   Serviços — texto em colunas, sem cards, linhas clicáveis
+   Serviços — menu interativo + painel (desktop/tablet) e acordeão (mobile).
+   Sem cards, sem grid de caixas: um menu compacto à esquerda controla um
+   painel editorial grande à direita (hover/click troca o serviço ativo); no
+   mobile isso vira um acordeão de um item aberto por vez. Só tipografia,
+   linhas finas e um retângulo de fundo levemente diferente no painel — sem
+   raio de borda, sem sombra.
    ========================================================================== */
-.services__list {
+.services__split {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  column-gap: 56px;
+  grid-template-columns: minmax(240px, 340px) 1fr;
+  gap: 44px;
+  align-items: stretch;
+  margin-top: 4px;
 }
-.service-row {
-  width: 100%;
-  padding: 13px 8px;
-  margin: 0 -8px;
-  border-bottom: 1px solid var(--line-soft);
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 16px;
-  border-radius: 4px;
-  transition: background 0.2s var(--ease);
+.services__accordion {
+  display: none;
 }
-.service-row:hover {
-  background: var(--bg-raised);
-}
-.service-row__main {
+
+/* ---- Menu (esquerda) --------------------------------------------------- */
+.services__menu {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  border-top: 1px solid var(--line-soft);
 }
-.service-row__name {
+.services__menu-item {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  padding: 15px 10px 15px 16px;
+  border-bottom: 1px solid var(--line-soft);
+  transition: background 0.25s var(--ease), padding-left 0.25s var(--ease);
+}
+.services__menu-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 0;
+  background: var(--rust);
+  transition: width 0.25s var(--ease);
+}
+.services__menu-item.is-active {
+  background: var(--bg-raised);
+  padding-left: 20px;
+}
+.services__menu-item.is-active::before {
+  width: 2px;
+}
+.services__menu-index {
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--ink-faint);
+  width: 20px;
+  flex-shrink: 0;
+  transition: color 0.25s var(--ease);
+}
+.services__menu-item.is-active .services__menu-index {
+  color: var(--rust);
+}
+.services__menu-name {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  transition: color 0.25s var(--ease);
+}
+.services__menu-item.is-active .services__menu-name {
+  color: var(--ink);
+  font-weight: 600;
+}
+.services__menu-tag {
+  font-family: var(--font-body);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--rust);
+  white-space: nowrap;
+}
+.services__menu-price {
+  font-family: var(--font-display);
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--ink-faint);
+  flex-shrink: 0;
+  transition: color 0.25s var(--ease);
+}
+.services__menu-item.is-active .services__menu-price {
+  color: var(--rust);
+}
+
+/* ---- Painel (direita) --------------------------------------------------- */
+.services__panel {
+  position: relative;
+  overflow: hidden;
+  background: var(--bg-panel);
+  border: 1px solid var(--line-soft);
+  padding: 40px clamp(24px, 4vw, 48px);
+  display: flex;
+  align-items: center;
+  min-height: 340px;
+}
+.services__panel-bignum {
+  position: absolute;
+  top: -0.18em;
+  right: 20px;
+  font-family: var(--font-display);
+  font-size: clamp(6rem, 13vw, 10rem);
+  font-weight: 700;
+  line-height: 1;
+  color: rgba(241, 240, 235, 0.05);
+  user-select: none;
+  z-index: 0;
+}
+.services__panel-inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+}
+.services__panel-kicker {
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+.services__panel-name {
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, 4vw, 3.4rem);
+  font-weight: 600;
+  line-height: 0.96;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.services__panel-badge {
+  font-family: var(--font-body);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--rust);
+  padding-left: 12px;
+  border-left: 1px solid var(--rust-deep);
+}
+.services__panel-desc {
+  font-size: 0.92rem;
+  color: var(--ink-dim);
+  max-width: 40ch;
+}
+.services__panel-price {
+  font-family: var(--font-display);
+  font-size: clamp(1.7rem, 2.6vw, 2.2rem);
+  font-weight: 600;
+  color: var(--rust);
+  margin-top: 4px;
+}
+.services__panel-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 14px;
+  padding-bottom: 6px;
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--ink);
+  border-bottom: 1px solid var(--line);
+  transition: color 0.25s var(--ease), border-color 0.25s var(--ease), gap 0.25s var(--ease);
+}
+.services__panel-cta:hover {
+  color: var(--rust-bright);
+  border-color: var(--rust);
+  gap: 14px;
+}
+.services__panel-cta svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* ---- Acordeão (mobile) --------------------------------------------------- */
+.services__acc-item {
+  border-bottom: 1px solid var(--line-soft);
+}
+.services__acc-head {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 4px;
+}
+.services__acc-index {
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--ink-faint);
+  width: 20px;
+  flex-shrink: 0;
+}
+.services__acc-item.is-open .services__acc-index {
+  color: var(--rust);
+}
+.services__acc-name {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 8px;
   font-family: var(--font-display);
   font-size: 1.02rem;
   font-weight: 600;
@@ -612,42 +825,89 @@ input:focus-visible {
   text-transform: uppercase;
   color: var(--ink);
 }
-.service-row__desc {
-  font-size: 0.82rem;
-  color: var(--ink-dim);
-  max-width: 34ch;
-}
-.service-row__meta {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+.services__acc-price {
+  font-family: var(--font-display);
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--rust);
   flex-shrink: 0;
-  white-space: nowrap;
 }
-.service-row__price {
+.services__acc-caret {
+  width: 13px;
+  height: 13px;
+  color: var(--ink-dim);
+  flex-shrink: 0;
+  transition: transform 0.25s var(--ease), color 0.25s var(--ease);
+}
+.services__acc-item.is-open .services__acc-caret {
+  transform: rotate(90deg);
+  color: var(--rust);
+}
+.services__acc-body {
+  overflow: hidden;
+}
+.services__acc-desc {
   font-size: 0.85rem;
   color: var(--ink-dim);
+  padding: 0 4px 16px 32px;
+  max-width: 44ch;
 }
-.service-row__meta svg {
+.services__acc-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 4px 18px 32px;
+  padding-bottom: 3px;
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--rust);
+  border-bottom: 1px solid var(--rust-deep);
+}
+.services__acc-cta svg {
   width: 14px;
   height: 14px;
-  color: var(--rust);
-  transition: transform 0.2s var(--ease);
 }
-.service-row:hover .service-row__meta svg {
-  transform: translateX(3px);
+
+@media (max-width: 860px) {
+  .services__split {
+    display: none;
+  }
+  .services__accordion {
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid var(--line-soft);
+  }
 }
 
 /* ==========================================================================
-   Barbearia — seção única (trabalho + sobre), uma fotografia
+   Barbearia — a fotografia como elemento de composição, não como coluna
+   solta: marca de corte no canto, etiqueta sobreposta e conteúdo que invade
+   o espaço da imagem.
    ========================================================================== */
 .story__grid {
   display: flex;
   align-items: flex-end;
 }
-.story__media {
+.story__photo {
+  position: relative;
   width: 56%;
   flex-shrink: 0;
+}
+.story__photo::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  width: 34px;
+  height: 34px;
+  border-top: 2px solid var(--rust);
+  border-right: 2px solid var(--rust);
+  z-index: 3;
+}
+.story__media {
   aspect-ratio: 16 / 11;
   overflow: hidden;
   background: var(--bg-panel);
@@ -657,59 +917,57 @@ input:focus-visible {
   height: 100%;
   object-fit: cover;
 }
+.story__tag {
+  position: absolute;
+  left: 0;
+  bottom: 22px;
+  z-index: 2;
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: var(--bg);
+  padding: 8px 14px;
+  border-left: 2px solid var(--rust);
+}
 .story__content {
   flex: 1;
   min-width: 0;
   background: var(--bg-raised);
   margin-left: -36px;
-  padding: 20px 0 20px 32px;
+  padding: 28px 0 28px 32px;
   position: relative;
   z-index: 2;
 }
-.story__eyebrow {
-  display: block;
-  font-family: var(--font-display);
-  font-size: 0.9rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  margin-bottom: 10px;
-}
-.story__eyebrow::before {
-  content: '';
-  display: inline-block;
-  width: 20px;
-  height: 3px;
-  background: var(--rust);
-  margin-right: 10px;
-  vertical-align: middle;
-}
 .story__text {
-  font-size: 0.92rem;
+  font-size: 0.95rem;
   color: var(--ink-dim);
   max-width: 32ch;
-  margin-bottom: 18px;
+  margin-bottom: 22px;
 }
 .story__stats {
   display: flex;
-  gap: 24px;
+  gap: 28px;
 }
 .story__stat {
-  padding-left: 12px;
+  padding-left: 14px;
   border-left: 2px solid var(--rust-deep);
 }
 .story__stat strong {
   display: block;
   font-family: var(--font-display);
-  font-size: 1.35rem;
+  font-size: 1.5rem;
   font-weight: 600;
   line-height: 1;
+  color: var(--ink);
 }
 .story__stat span {
   display: block;
   font-size: 0.72rem;
   color: var(--ink-dim);
-  margin-top: 4px;
+  margin-top: 5px;
 }
 
 /* ==========================================================================
@@ -717,68 +975,302 @@ input:focus-visible {
    ========================================================================== */
 .team-review {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 40px;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 48px;
 }
-.team-list-compact {
-  margin-top: 14px;
+
+/* Equipe — mesmo mecanismo visual das linhas de Serviços (número, barra de
+   destaque, hover), para dar consistência ao "sistema" editorial do site,
+   funcionando mesmo sem fotos dos profissionais. */
+.team-list {
   display: flex;
   flex-direction: column;
+  border-top: 1px solid var(--line-soft);
 }
-.team-list-compact li {
+.team-member {
+  position: relative;
   display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 10px 0;
+  align-items: center;
+  gap: 20px;
+  padding: 20px 8px 20px 20px;
+  margin: 0 -8px;
   border-bottom: 1px solid var(--line-soft);
+  transition: background 0.25s var(--ease), padding-left 0.25s var(--ease);
 }
-.team-list-compact strong {
+.team-member::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 0;
+  background: var(--rust);
+  transition: width 0.25s var(--ease);
+}
+.team-member:hover {
+  background: var(--bg-raised);
+  padding-left: 28px;
+}
+.team-member:hover::before {
+  width: 3px;
+}
+.team-member__index {
   font-family: var(--font-display);
-  font-size: 0.98rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--ink-faint);
+  width: 26px;
+  flex-shrink: 0;
+  transition: color 0.25s var(--ease);
+}
+.team-member:hover .team-member__index {
+  color: var(--rust);
+}
+.team-member__info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.team-member__name {
+  font-family: var(--font-display);
+  font-size: clamp(1.1rem, 2.2vw, 1.4rem);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.01em;
+  color: var(--ink);
 }
-.team-list-compact span {
+.team-member__last {
+  color: var(--ink-dim);
+  font-weight: 500;
+}
+.team-member__specialty {
   font-size: 0.8rem;
   color: var(--ink-dim);
 }
+
+/* Depoimento — integrado ao ritmo da seção via aspas grandes e rótulo
+   explícito de conteúdo demonstrativo. */
 .team-review__review {
-  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  padding-left: 24px;
   border-left: 2px solid var(--rust);
+}
+.team-review__quote {
+  font-family: var(--font-display);
+  font-size: 3.2rem;
+  line-height: 0.5;
+  color: var(--rust);
+  opacity: 0.55;
+  margin-bottom: 12px;
 }
 .review-stars {
   display: block;
   color: var(--rust);
   font-size: 0.85rem;
   letter-spacing: 0.1em;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 .team-review__review p {
-  font-size: 0.95rem;
-  line-height: 1.5;
-  margin-bottom: 8px;
+  font-size: 1.02rem;
+  line-height: 1.55;
+  color: var(--ink);
+  margin-bottom: 16px;
+}
+.team-review__foot {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding-top: 12px;
+  border-top: 1px solid var(--line-soft);
 }
 .team-review__author {
-  font-size: 0.82rem;
+  font-size: 0.85rem;
   font-weight: 600;
   color: var(--ink-dim);
 }
+.team-review__demo-tag {
+  font-size: 0.68rem;
+  color: var(--ink-faint);
+  letter-spacing: 0.03em;
+}
 
 /* ==========================================================================
-   Localização + CTA — uma área compacta
+   Como agendar — a experiência de agendamento como diferencial, com uma
+   progressão numerada (linha atravessando os números, "quebrada" por eles)
+   e pequenos previews reais reaproveitando as classes do modal de reserva.
    ========================================================================== */
-.location__inner {
+.booking-showcase__lead {
+  font-size: 0.95rem;
+  color: var(--ink-dim);
+  max-width: 54ch;
+  margin-top: -6px;
+  margin-bottom: 8px;
+}
+.booking-showcase__steps {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  margin: 36px 0 40px;
+}
+.booking-showcase__steps::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 19px;
+  height: 1px;
+  background: var(--line);
+  z-index: 0;
+}
+.booking-step {
+  position: relative;
+  z-index: 1;
+  padding-top: 50px;
+}
+.booking-step__n {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: inline-block;
+  font-family: var(--font-display);
+  font-size: 1.7rem;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--rust);
+  background: var(--bg);
+  padding-right: 14px;
+}
+.booking-step__title {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+.booking-step__desc {
+  display: block;
+  font-size: 0.82rem;
+  color: var(--ink-dim);
+  max-width: 26ch;
+}
+
+.booking-showcase__previews {
   display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-bottom: 32px;
+}
+.booking-mini {
+  flex: 1 1 260px;
+  background: var(--bg-raised);
+  border: 1px solid var(--line-soft);
+  border-radius: 6px;
+  padding: 18px;
+}
+.booking-mini__label {
+  display: block;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--rust);
+  margin-bottom: 14px;
+}
+.booking-mini .booking-option {
+  pointer-events: none;
+}
+.booking-mini__whatsapp {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.92rem;
+  color: var(--ink);
+  padding: 3px 0;
+}
+.booking-mini__whatsapp svg {
+  width: 22px;
+  height: 22px;
+  color: var(--rust);
+  flex-shrink: 0;
+}
+
+.booking-showcase__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+  padding-top: 20px;
+  border-top: 1px solid var(--line-soft);
+}
+.booking-showcase__note {
+  font-size: 0.78rem;
+  color: var(--ink-faint);
+  line-height: 1.5;
+  max-width: 56ch;
+}
+
+/* ==========================================================================
+   CTA final — fechamento editorial forte (título + ações), com uma barra
+   compacta de localização/horários logo abaixo, separada por uma linha.
+   ========================================================================== */
+.cta-final__main {
+  display: flex;
+  flex-wrap: wrap;
   align-items: flex-end;
   justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 24px;
+  gap: 28px;
+  padding-bottom: 32px;
 }
-.location__address {
-  font-size: 0.95rem;
-  margin: 10px 0 12px;
+.cta-final__headline {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  font-weight: 700;
+  line-height: 0.98;
+  letter-spacing: -0.01em;
+  font-size: clamp(2rem, 5.2vw, 3.4rem);
+  color: var(--ink);
+}
+.cta-final__actions {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.cta-final__bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px 32px;
+  padding-top: 24px;
+  border-top: 1px solid var(--line-soft);
+}
+.cta-final__location {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.cta-final__label {
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.cta-final__address {
+  font-size: 0.82rem;
+  color: var(--ink-dim);
 }
 .location__hours {
   display: flex;
@@ -787,24 +1279,43 @@ input:focus-visible {
   font-size: 0.8rem;
   color: var(--ink-dim);
 }
-.location__actions {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
+.cta-final__map {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--ink-dim);
+  transition: color 0.2s var(--ease);
+}
+.cta-final__map svg {
+  width: 14px;
+  height: 14px;
+  transition: transform 0.2s var(--ease);
+}
+.cta-final__map:hover {
+  color: var(--rust);
+}
+.cta-final__map:hover svg {
+  transform: translateX(3px);
 }
 
 /* ==========================================================================
-   Footer — muito compacto
+   Footer — compacto, em duas linhas com hierarquia clara
    ========================================================================== */
 .footer {
   border-top: 1px solid var(--line-soft);
-  padding: 24px 0;
+  padding: 28px 0 22px;
 }
-.footer__inner {
+.footer__top {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   flex-wrap: wrap;
-  gap: 8px 20px;
+  gap: 12px 20px;
+  padding-bottom: 18px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid var(--line-soft);
 }
 .footer__brand {
   display: flex;
@@ -817,7 +1328,7 @@ input:focus-visible {
 }
 .footer__links {
   display: flex;
-  gap: 16px;
+  gap: 18px;
 }
 .footer__link {
   display: flex;
@@ -830,16 +1341,17 @@ input:focus-visible {
 .footer__link:hover {
   color: var(--rust);
 }
-.footer__tagline {
-  font-size: 0.8rem;
-  color: var(--ink-faint);
-  margin-left: auto;
-}
 .footer__bottom {
-  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 6px 20px;
+}
+.footer__tagline,
+.footer__copy {
   font-size: 0.74rem;
   color: var(--ink-faint);
-  margin-top: 4px;
 }
 
 /* ==========================================================================
@@ -962,6 +1474,12 @@ input:focus-visible {
   flex-shrink: 0;
 }
 
+.booking-datetime {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
 .booking-dates {
   display: flex;
   gap: 8px;
@@ -980,10 +1498,40 @@ input:focus-visible {
   white-space: nowrap;
   transition: border-color 0.2s var(--ease), background 0.2s var(--ease);
 }
+.booking-date:hover {
+  border-color: var(--line);
+}
 .booking-date.is-selected {
   border-color: var(--rust);
   background: var(--bg-raised);
   color: var(--rust);
+}
+
+.booking-timeslot-area {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.booking-timeslot-header {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.booking-timeslot-title {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.booking-timeslot-hint {
+  font-size: 0.8rem;
+  color: var(--ink-dim);
+}
+.booking-timeslot-placeholder {
+  font-size: 0.88rem;
+  color: var(--ink-faint);
+  padding: 8px 0 4px;
 }
 
 .booking-times {
@@ -1000,10 +1548,17 @@ input:focus-visible {
   text-align: center;
   transition: border-color 0.2s var(--ease), background 0.2s var(--ease);
 }
+.booking-time:hover:not(:disabled) {
+  border-color: var(--line);
+}
 .booking-time.is-selected {
   border-color: var(--rust);
   background: var(--bg-raised);
   color: var(--rust);
+}
+.booking-time:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
 }
 .booking-empty {
   font-size: 0.88rem;
@@ -1107,6 +1662,21 @@ input:focus-visible {
     padding-top: 16px;
     border-top: 1px solid var(--line-soft);
   }
+  .booking-showcase__steps {
+    grid-template-columns: repeat(2, 1fr);
+    row-gap: 32px;
+  }
+  .booking-showcase__steps::before {
+    display: none;
+  }
+  .booking-step {
+    padding-top: 0;
+    padding-left: 46px;
+  }
+  .booking-step__n {
+    background: none;
+    padding-right: 0;
+  }
 }
 
 @media (max-width: 620px) {
@@ -1119,46 +1689,52 @@ input:focus-visible {
   .section--tight {
     padding-top: 28px;
   }
-  .services__list {
-    grid-template-columns: 1fr;
-    column-gap: 0;
-  }
-  .service-row {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 4px;
-    padding: 12px 8px;
-  }
   .story__grid {
     flex-direction: column;
     align-items: stretch;
   }
-  .story__media {
+  .story__photo {
     width: 100%;
+  }
+  .story__media {
     aspect-ratio: 16 / 10;
   }
   .story__content {
     margin-left: 0;
     margin-top: -20px;
     margin-right: 28px;
-    padding: 16px 0 16px 16px;
+    padding: 18px 0 18px 16px;
   }
-  .location__inner {
+  .booking-showcase__steps {
+    grid-template-columns: 1fr;
+    row-gap: 24px;
+  }
+  .booking-showcase__foot {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .booking-showcase__foot .btn {
+    justify-content: center;
+  }
+  .cta-final__main {
     flex-direction: column;
     align-items: flex-start;
   }
-  .location__actions {
+  .cta-final__actions {
     width: 100%;
   }
-  .location__actions .btn {
+  .cta-final__actions .btn {
     flex: 1;
     justify-content: center;
   }
-  .footer__inner {
+  .cta-final__bar {
     flex-direction: column;
     align-items: flex-start;
+    gap: 14px;
   }
-  .footer__tagline {
-    margin-left: 0;
+  .footer__top,
+  .footer__bottom {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }

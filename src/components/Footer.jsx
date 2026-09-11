@@ -6,30 +6,33 @@ export default function Footer() {
 
   return (
     <footer className="footer">
-      <div className="container footer__inner">
-        <p className="footer__brand">
-          <NobreMark width={18} height={18} />
-          {SITE.brand}
-        </p>
+      <div className="container">
+        <div className="footer__top">
+          <p className="footer__brand">
+            <NobreMark width={18} height={18} />
+            {SITE.brand}
+          </p>
 
-        <div className="footer__links">
-          <a href={SITE.instagramUrl} target="_blank" rel="noopener noreferrer" className="footer__link">
-            <InstagramIcon width={15} height={15} />
-            Instagram
-          </a>
-          <a href={SITE.whatsappUrl} target="_blank" rel="noopener noreferrer" className="footer__link">
-            <WhatsappIcon width={15} height={15} />
-            WhatsApp
-          </a>
+          <div className="footer__links">
+            <a href={SITE.instagramUrl} target="_blank" rel="noopener noreferrer" className="footer__link">
+              <InstagramIcon width={15} height={15} />
+              Instagram
+            </a>
+            <a href={SITE.whatsappUrl} target="_blank" rel="noopener noreferrer" className="footer__link">
+              <WhatsappIcon width={15} height={15} />
+              WhatsApp
+            </a>
+          </div>
         </div>
 
-        <p className="footer__tagline">
-          Corte • Barba • {SITE.city}
-        </p>
-
-        <p className="footer__bottom">
-          © {year} {SITE.name}
-        </p>
+        <div className="footer__bottom">
+          <span className="footer__tagline">
+            Corte • Barba • {SITE.city}
+          </span>
+          <span className="footer__copy">
+            © {year} {SITE.name}
+          </span>
+        </div>
       </div>
     </footer>
   );

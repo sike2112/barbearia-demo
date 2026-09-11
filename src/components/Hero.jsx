@@ -10,6 +10,7 @@ import {
 import { SITE } from '../config/site';
 import { useBooking } from '../lib/BookingContext';
 import { NobreMark, ArrowRightIcon } from './Icons';
+import HeroLedOutline from './HeroLedOutline';
 
 const EASE = [0.16, 1, 0.3, 1];
 
@@ -94,6 +95,7 @@ export default function Hero() {
   const prefersReduced = useReducedMotion();
   const { openBooking } = useBooking();
   const heroRef = useRef(null);
+  const nobreLayerRef = useRef(null);
   const [canHover, setCanHover] = useState(
     () => typeof window !== 'undefined' && window.matchMedia('(hover: hover) and (pointer: fine)').matches,
   );
@@ -113,24 +115,15 @@ export default function Hero() {
   const springX = useSpring(mvX, { stiffness: 110, damping: 20, mass: 0.6 });
   const springY = useSpring(mvY, { stiffness: 110, damping: 20, mass: 0.6 });
 
-  const cursorX = useMotionValue(-100);
-  const cursorY = useMotionValue(-100);
-  const cursorSpringX = useSpring(cursorX, { stiffness: 250, damping: 26, mass: 0.4 });
-  const cursorSpringY = useSpring(cursorY, { stiffness: 250, damping: 26, mass: 0.4 });
-
   const handlePointerMove = (e) => {
     if (!active || !heroRef.current) return;
     const rect = heroRef.current.getBoundingClientRect();
     mvX.set((e.clientX - rect.left) / rect.width - 0.5);
     mvY.set((e.clientY - rect.top) / rect.height - 0.5);
-    cursorX.set(e.clientX - rect.left);
-    cursorY.set(e.clientY - rect.top);
   };
   const handlePointerLeave = () => {
     mvX.set(0);
     mvY.set(0);
-    cursorX.set(-100);
-    cursorY.set(-100);
   };
 
   // ---- Reação ao início do scroll -------------------------------------------
@@ -152,7 +145,6 @@ export default function Hero() {
   const frontY = useTransform([springY, scrollT], ([sy, st]) => sy * -6 - st * 46);
 
   const footOpacity = useTransform(scrollT, [0, 0.55], [1, 0]);
-  const cursorOpacity = useMotionValue(0);
 
   return (
     <section
@@ -161,18 +153,9 @@ export default function Hero() {
       ref={heroRef}
       onPointerMove={handlePointerMove}
       onPointerLeave={handlePointerLeave}
-      onPointerEnter={() => cursorOpacity.set(1)}
     >
       <div className="hero__noise" aria-hidden="true" />
       <div className="hero__grid" aria-hidden="true" />
-
-      {active && (
-        <motion.div
-          className="hero__cursor"
-          style={{ x: cursorSpringX, y: cursorSpringY, opacity: cursorOpacity }}
-          aria-hidden="true"
-        />
-      )}
 
       <div className="container hero__inner">
         <motion.div initial={prefersReduced ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
@@ -180,10 +163,15 @@ export default function Hero() {
         </motion.div>
 
         <div className="hero__stage">
-          <motion.div className="hero__layer hero__layer--back" style={{ x: backX, y: backY, opacity: backOpacity }}>
+          <motion.div
+            className="hero__layer hero__layer--back"
+            ref={nobreLayerRef}
+            style={{ x: backX, y: backY, opacity: backOpacity }}
+          >
             <RevealLine className="hero__word hero__word--big" delay={0.05} prefersReduced={prefersReduced}>
               Nobre
             </RevealLine>
+            <HeroLedOutline containerRef={nobreLayerRef} />
           </motion.div>
 
           <motion.div

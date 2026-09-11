@@ -9,17 +9,35 @@ export default function LocationCta() {
   const { openBooking } = useBooking();
 
   return (
-    <section id="contato" className="section section--panel location">
-      <motion.div className="container location__inner" {...fadeUp(prefersReduced, { y: 10 })}>
-        <div className="location__info">
-          <span className="services__eyebrow">
-            {SITE.brand} — {SITE.city}, {SITE.state}
-          </span>
-          <p className="location__address">
-            {SITE.address.line1}
+    <section id="contato" className="section section--panel cta-final">
+      <div className="container">
+        <motion.div className="cta-final__main" {...fadeUp(prefersReduced, { y: 14 })}>
+          <h2 className="cta-final__headline">
+            Seu horário.
             <br />
-            {SITE.address.line2}
-          </p>
+            Do seu jeito.
+          </h2>
+          <div className="cta-final__actions">
+            <button type="button" className="btn btn--light" onClick={() => openBooking()}>
+              Agendar horário
+            </button>
+            <a href={SITE.whatsappUrl} target="_blank" rel="noopener noreferrer" className="btn btn--outline">
+              Falar no WhatsApp
+              <ArrowRightIcon />
+            </a>
+          </div>
+        </motion.div>
+
+        <motion.div className="cta-final__bar" {...fadeUp(prefersReduced, { y: 10, delay: 0.1 })}>
+          <div className="cta-final__location">
+            <span className="cta-final__label">
+              {SITE.brand} — {SITE.city}, {SITE.state}
+            </span>
+            <span className="cta-final__address">
+              {SITE.address.line1}, {SITE.address.line2}
+            </span>
+          </div>
+
           <div className="location__hours">
             {SITE.openingHours.map((row) => (
               <span key={row.days}>
@@ -27,18 +45,13 @@ export default function LocationCta() {
               </span>
             ))}
           </div>
-        </div>
 
-        <div className="location__actions">
-          <a href={SITE.mapsUrl} target="_blank" rel="noopener noreferrer" className="btn btn--outline">
+          <a href={SITE.mapsUrl} target="_blank" rel="noopener noreferrer" className="cta-final__map">
             Como chegar
             <ArrowRightIcon />
           </a>
-          <button type="button" className="btn btn--light" onClick={() => openBooking()}>
-            Agendar horário
-          </button>
-        </div>
-      </motion.div>
+        </motion.div>
+      </div>
     </section>
   );
 }

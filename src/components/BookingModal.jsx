@@ -4,7 +4,8 @@ import { SITE, SERVICES, TEAM, BOOKING_CONFIG } from '../config/site';
 import { generateAvailableDates, generateTimeSlots, formatDateShort, formatDateLong, formatTime } from '../lib/booking';
 import { CloseIcon, ArrowRightIcon } from './Icons';
 
-const STEP_LABELS = ['Serviço', 'Barbeiro', 'Data', 'Horário', 'Seus dados', 'Resumo'];
+const STEP_LABELS = ['Serviço', 'Barbeiro', 'Data e horário', 'Seus dados', 'Resumo'];
+const TOTAL_STEPS = STEP_LABELS.length;
 const EASE = [0.16, 1, 0.3, 1];
 
 function emptyState(initialServiceId) {
@@ -123,7 +124,7 @@ export default function BookingModal({ isOpen, initialServiceId, onClose }) {
           <div className="booking-modal__head">
             <div>
               <p className="booking-modal__step-label">
-                Passo {state.step} de 6 — {STEP_LABELS[state.step - 1]}
+                Passo {state.step} de {TOTAL_STEPS} — {STEP_LABELS[state.step - 1]}
               </p>
               <h2 id="booking-title" className="booking-modal__title">
                 Agendar horário
@@ -135,7 +136,7 @@ export default function BookingModal({ isOpen, initialServiceId, onClose }) {
           </div>
 
           <div className="booking-modal__progress">
-            <div className="booking-modal__progress-bar" style={{ width: `${(state.step / 6) * 100}%` }} />
+            <div className="booking-modal__progress-bar" style={{ width: `${(state.step / TOTAL_STEPS) * 100}%` }} />
           </div>
 
           <div className="booking-modal__body">
@@ -189,39 +190,60 @@ export default function BookingModal({ isOpen, initialServiceId, onClose }) {
             )}
 
             {state.step === 3 && (
-              <div className="booking-dates">
-                {dates.map((d) => (
-                  <button
-                    key={d.toISOString()}
-                    type="button"
-                    className={`booking-date ${state.date && state.date.getTime() === d.getTime() ? 'is-selected' : ''}`}
-                    onClick={() => setState((prev) => ({ ...prev, date: d, time: null }))}
-                  >
-                    {formatDateShort(d)}
-                  </button>
-                ))}
+              <div className="booking-datetime">
+                <div className="booking-dates">
+                  {dates.map((d) => (
+                    <button
+                      key={d.toISOString()}
+                      type="button"
+                      className={`booking-date ${state.date && state.date.getTime() === d.getTime() ? 'is-selected' : ''}`}
+                      onClick={() => setState((prev) => ({ ...prev, date: d, time: null }))}
+                    >
+                      {formatDateShort(d)}
+                    </button>
+                  ))}
+                </div>
+
+                <div className="booking-timeslot-area">
+                  {state.date ? (
+                    <>
+                      <div className="booking-timeslot-header">
+                        <p className="booking-timeslot-title">Horários disponíveis</p>
+                        <p className="booking-timeslot-hint">Selecione um horário</p>
+                      </div>
+                      <AnimatePresence mode="wait" initial={false}>
+                        <motion.div
+                          key={state.date.toISOString()}
+                          className="booking-times"
+                          initial={prefersReduced ? false : { opacity: 0, y: 6 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -6 }}
+                          transition={{ duration: 0.16, ease: EASE }}
+                        >
+                          {timeSlots.length === 0 && (
+                            <p className="booking-empty">Sem horários disponíveis para essa data. Escolha outra data.</p>
+                          )}
+                          {timeSlots.map((t) => (
+                            <button
+                              key={t.toISOString()}
+                              type="button"
+                              className={`booking-time ${state.time && state.time.getTime() === t.getTime() ? 'is-selected' : ''}`}
+                              onClick={() => setState((prev) => ({ ...prev, time: t }))}
+                            >
+                              {formatTime(t)}
+                            </button>
+                          ))}
+                        </motion.div>
+                      </AnimatePresence>
+                    </>
+                  ) : (
+                    <p className="booking-timeslot-placeholder">Selecione um dia para ver os horários disponíveis.</p>
+                  )}
+                </div>
               </div>
             )}
 
             {state.step === 4 && (
-              <div className="booking-times">
-                {timeSlots.length === 0 && (
-                  <p className="booking-empty">Sem horários disponíveis para essa data. Volte e escolha outra data.</p>
-                )}
-                {timeSlots.map((t) => (
-                  <button
-                    key={t.toISOString()}
-                    type="button"
-                    className={`booking-time ${state.time && state.time.getTime() === t.getTime() ? 'is-selected' : ''}`}
-                    onClick={() => setState((prev) => ({ ...prev, time: t }))}
-                  >
-                    {formatTime(t)}
-                  </button>
-                ))}
-              </div>
-            )}
-
-            {state.step === 5 && (
               <div className="booking-form">
                 <label className="booking-field">
                   <span>Nome*</span>
@@ -246,7 +268,7 @@ export default function BookingModal({ isOpen, initialServiceId, onClose }) {
               </div>
             )}
 
-            {state.step === 6 && (
+            {state.step === 5 && (
               <div className="booking-summary">
                 <div className="booking-summary__row">
                   <span>Nome</span>
@@ -287,15 +309,14 @@ export default function BookingModal({ isOpen, initialServiceId, onClose }) {
                 Voltar
               </button>
             )}
-            {state.step < 5 && (
+            {state.step < 4 && (
               <button
                 type="button"
                 className="btn btn--light"
                 disabled={
                   (state.step === 1 && !state.serviceId) ||
                   (state.step === 2 && !state.barberId) ||
-                  (state.step === 3 && !state.date) ||
-                  (state.step === 4 && !state.time)
+                  (state.step === 3 && (!state.date || !state.time))
                 }
                 onClick={() => goTo(state.step + 1)}
               >
@@ -303,13 +324,13 @@ export default function BookingModal({ isOpen, initialServiceId, onClose }) {
                 <ArrowRightIcon />
               </button>
             )}
-            {state.step === 5 && (
-              <button type="button" className="btn btn--light" disabled={!state.name.trim()} onClick={() => goTo(6)}>
+            {state.step === 4 && (
+              <button type="button" className="btn btn--light" disabled={!state.name.trim()} onClick={() => goTo(5)}>
                 Revisar
                 <ArrowRightIcon />
               </button>
             )}
-            {state.step === 6 && (
+            {state.step === 5 && (
               <button type="button" className="btn btn--light" onClick={confirmAndSendWhatsapp}>
                 Confirmar pelo WhatsApp
               </button>

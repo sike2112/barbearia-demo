@@ -38,11 +38,6 @@ export const SITE = {
     { days: 'Sáb', time: '09:00 — 18:00' },
     { days: 'Dom', time: 'Fechado' },
   ],
-
-  stats: [
-    { value: String(yearsOfExperience), label: 'anos de experiência' },
-    { value: '2.500+', label: 'clientes atendidos' },
-  ],
 };
 
 export const NAV_LINKS = [
@@ -83,6 +78,14 @@ export const TEAM = [
   { id: 'lucas', first: 'Lucas', last: 'Mendes', specialty: 'Corte e degradê' },
   { id: 'rafael', first: 'Rafael', last: 'Costa', specialty: 'Barba e navalha' },
   { id: 'andre', first: 'André', last: 'Lima', specialty: 'Corte clássico' },
+];
+
+// Estatísticas exibidas na seção "A barbearia" — sempre derivadas de dados
+// reais da configuração (nunca um número inventado à toa). O ano de
+// fundação vem de ESTABLISHED_YEAR; o total de serviços, do array acima.
+export const STATS = [
+  { value: String(yearsOfExperience), label: 'anos de experiência' },
+  { value: String(SERVICES.length), label: 'serviços especializados' },
 ];
 
 // Avaliação em destaque — conteúdo de demonstração. Troque pelo depoimento
